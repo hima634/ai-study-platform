@@ -1,0 +1,28 @@
+services:
+  server:
+    build: ./Server
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Server/.env
+    environment:
+      - CLIENT_URL=http://localhost:5173
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  client:
+    build:
+      context: ./Fronted
+      args:
+        VITE_API_URL: http://localhost:3000/api
+    ports:
+      - "5173:80"
+    depends_on:
+      - server
+
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
